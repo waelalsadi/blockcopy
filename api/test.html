@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار API - BlockCopy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+        }
+        .test-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.02); }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .result.success { background: #d4edda; border: 1px solid #28a745; }
+        .result.error { background: #f8d7da; border: 1px solid #dc3545; }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .status.online { background: #d4edda; color: #155724; }
+        .status.offline { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار API - BlockCopy</h1>
+
+        <!-- API Base URL -->
+        <div class="test-section">
+            <h3>📍 عنوان API</h3>
+            <div class="input-group">
+                <label>API Base URL:</label>
+                <input type="text" id="apiBase" value="http://blockcopy.tempavatar.click/api">
+            </div>
+            <button onclick="testConnection()">🔍 اختبار الاتصال</button>
+            <div id="connectionResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Login Test -->
+        <div class="test-section">
+            <h3>🔑 اختبار تسجيل الدخول</h3>
+            <div class="input-group">
+                <label>البريد الإلكتروني:</label>
+                <input type="email" id="loginEmail" value="admin@blockcopy.com">
+            </div>
+            <div class="input-group">
+                <label>كلمة المرور:</label>
+                <input type="password" id="loginPassword" value="admin123">
+            </div>
+            <button onclick="testLogin()">🚀 تسجيل الدخول</button>
+            <div id="loginResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Register Test -->
+        <div class="test-section">
+            <h3>📝 اختبار التسجيل</h3>
+            <div class="input-group">
+                <label>الاسم:</label>
+                <input type="text" id="regName" value="Test User">
+            </div>
+            <div class="input-group">
+                <label>البريد الإلكتروني:</label>
+                <input type="email" id="regEmail" value="">
+            </div>
+            <div class="input-group">
+                <label>كلمة المرور:</label>
+                <input type="password" id="regPassword" value="test123456">
+            </div>
+            <button onclick="testRegister()">📝 تسجيل مستخدم جديد</button>
+            <div id="regResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Custom Request -->
+        <div class="test-section">
+            <h3>⚙️ طلب مخصص</h3>
+            <div class="input-group">
+                <label>الطريقة:</label>
+                <select id="customMethod" style="width:100%; padding:10px; border:1px solid #ced4da; border-radius:5px;">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>المسار:</label>
+                <input type="text" id="customPath" value="/projects">
+            </div>
+            <div class="input-group">
+                <label>البيانات (JSON):</label>
+                <textarea id="customBody" rows="4" style="width:100%; padding:10px; border:1px solid #ced4da; border-radius:5px;">{}</textarea>
+            </div>
+            <div class="input-group">
+                <label>Token:</label>
+                <input type="text" id="customToken" placeholder="Bearer token هنا...">
+            </div>
+            <button onclick="testCustom()">🔧 إرسال الطلب</button>
+            <div id="customResult" class="result" style="display:none;"></div>
+        </div>
+
+        <!-- Saved Token -->
+        <div class="test-section">
+            <h3>💾 Token المحفوظ</h3>
+            <div id="savedToken" class="result">لا يوجد token محفوظ</div>
+            <button onclick="clearToken()" style="margin-top:10px;">🗑️ حذف Token</button>
+        </div>
+    </div>
+
+    <script>
+        // تحميل token المحفوظ
+        let savedToken = localStorage.getItem('blockcopy_token');
+        if (savedToken) {
+            document.getElementById('savedToken').textContent = savedToken;
+            document.getElementById('customToken').value = savedToken;
+        }
+
+        // توليد بريد إلكتروني عشوائي للاختبار
+        document.getElementById('regEmail').value = 'test' + Date.now() + '@example.com';
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            const apiBase = document.getElementById('apiBase').value;
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري الاتصال...';
+
+            try {
+                const response = await fetch(apiBase.replace('/api', '/api/install.php'));
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ الاتصال يعمل بنجاح!\n\nStatus: ' + response.status;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ فشل الاتصال\n\nStatus: ' + response.status;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ خطأ في الاتصال:\n\n' + error.message;
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            const apiBase = document.getElementById('apiBase').value;
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري تسجيل الدخول...';
+
+            try {
+                const response = await fetch(apiBase + '/auth/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ تسجيل الدخول نجح!\n\n' + JSON.stringify(data, null, 2);
+
+                    // حفظ token
+                    localStorage.setItem('blockcopy_token', data.token);
+                    savedToken = data.token;
+                    document.getElementById('savedToken').textContent = data.token;
+                    document.getElementById('customToken').value = data.token;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ فشل تسجيل الدخول\n\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ خطأ:\n\n' + error.message;
+            }
+        }
+
+        async function testRegister() {
+            const resultDiv = document.getElementById('regResult');
+            const apiBase = document.getElementById('apiBase').value;
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري التسجيل...';
+
+            try {
+                const response = await fetch(apiBase + '/auth/register.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = '✅ التسجيل نجح!\n\n' + JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ فشل التسجيل\n\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ خطأ:\n\n' + error.message;
+            }
+        }
+
+        async function testCustom() {
+            const resultDiv = document.getElementById('customResult');
+            const apiBase = document.getElementById('apiBase').value;
+            const method = document.getElementById('customMethod').value;
+            const path = document.getElementById('customPath').value;
+            const body = document.getElementById('customBody').value;
+            const token = document.getElementById('customToken').value;
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'جاري إرسال الطلب...';
+
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) {
+                    headers['Authorization'] = 'Bearer ' + token;
+                }
+
+                const options = {
+                    method: method,
+                    headers: headers
+                };
+
+                if (method !== 'GET' && body) {
+                    options.body = body;
+                }
+
+                const response = await fetch(apiBase + path, options);
+                const data = await response.json();
+
+                resultDiv.className = response.ok ? 'result success' : 'result error';
+                resultDiv.textContent = 'Status: ' + response.status + '\n\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ خطأ:\n\n' + error.message;
+            }
+        }
+
+        function clearToken() {
+            localStorage.removeItem('blockcopy_token');
+            savedToken = null;
+            document.getElementById('savedToken').textContent = 'لا يوجد token محفوظ';
+            document.getElementById('customToken').value = '';
+        }
+
+        // اختبار الاتصال تلقائياً عند التحميل
+        window.onload = function() {
+            testConnection();
+        };
+    </script>
+</body>
+</html>
