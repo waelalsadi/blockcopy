@@ -1,0 +1,61 @@
+# ==========================================
+# إعدادات nginx لمشروع BlockCopy PHP API
+# ==========================================
+# أضف هذا إلى إعدادات nginx الخاص بك
+# أو ضعه في ملف داخل /etc/nginx/sites-available/
+
+server {
+    listen 80;
+    server_name your-domain.com;  # غيّر هذا لنطاقك
+
+    root /path/to/public_html;    # غيّر هذا للمسار الصحيح
+    index index.php index.html;
+
+    # إعدادات PHP API
+    location /api {
+        alias /path/to/public_html/api;  # غيّر هذا للمسار الصحيح
+        try_files $uri $uri/ @api;
+
+        location ~ \.php$ {
+            if (!-f $request_filename) { return 404; }
+            fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;  # قد تحتاج تغيير الإصدار
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $request_filename;
+            include fastcgi_params;
+        }
+    }
+
+    location @api {
+        rewrite ^/api/(.*)$ /api/index.php?q=$1 last;
+    }
+
+    # إعدادات Next.js (اختياري)
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+# ==========================================
+# أو استخدم هذا الإعداد البسيط للـ API فقط
+# ==========================================
+# أضفه داخل server block الحالي
+
+location ~ ^/api/.*\.php$ {
+    fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+
+location /api {
+    try_files $uri $uri/ @api;
+}
+
+location @api {
+    rewrite ^/api/(.*)$ /api/index.php?q=$1 last;
+}
