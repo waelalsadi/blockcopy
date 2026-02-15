@@ -1,0 +1,27 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Auth routes
+RewriteRule ^auth/register$ auth/register.php [L]
+RewriteRule ^auth/login$ auth/login.php [L]
+RewriteRule ^auth/me$ auth/me.php [L]
+RewriteRule ^auth/logout$ auth/logout.php [L]
+
+# Projects routes
+RewriteRule ^projects$ projects/index.php [L]
+RewriteRule ^projects/([0-9]+)$ projects/project.php?id=$1 [L]
+
+# Blocks routes
+RewriteRule ^blocks$ blocks/index.php [L]
+RewriteRule ^blocks/([0-9]+)$ blocks/block.php?id=$1 [L]
+
+# Files routes
+RewriteRule ^files$ files/index.php [L]
+RewriteRule ^files/([0-9]+)$ files/file.php?id=$1 [L]
+
+# Chat routes
+RewriteRule ^chat$ chat/index.php [L]
+
+# Start section routes
+RewriteRule ^start-section$ start-section/index.php [L]

@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://copywael:St%401088371529@91.98.150.167:3306/copywael"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects Project[]
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  clientName  String
+  description String   @db.Text
+  content     String   @db.LongText
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  blocks       Block[]
+  files        File[]
+  chatMessages ChatMessage[]
+  startSection StartSection?
+}
+
+model Block {
+  id        String   @id @default(uuid())
+  title     String
+  content   String   @db.LongText
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model File {
+  id       String @id @default(uuid())
+  url      String
+  name     String
+  size     Int
+  type     String
+  fileType String @default("file")
+  content  String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  role      String
+  content   String   @db.LongText
+  createdAt DateTime @default(now())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model StartSection {
+  id               String  @id @default(uuid())
+  projectOverview  String  @db.Text
+  generalGoal      String  @db.Text
+  
+  // Ideal Client
+  idealClientDemographics String? @db.Text
+  idealClientPainPoints   String? @db.Text
+  idealClientGoals        String? @db.Text
+  idealClientObjections   String? @db.Text
+
+  // Project Understanding
+  projectUnderstandingProblem     String? @db.Text
+  projectUnderstandingSolution    String? @db.Text
+  projectUnderstandingUniqueValue String? @db.Text
+
+  // Framework - What
+  frameworkWhatProblemSolved  String? @db.Text
+  frameworkWhatMechanism      String? @db.Text
+  frameworkWhatFeatures       String? @db.Text
+  frameworkWhatPrice          String? @db.Text
+  frameworkWhatRequirements   String? @db.Text
+
+  // Framework - Who
+  frameworkWhoDemographics String? @db.Text
+  frameworkWhoInterests    String? @db.Text
+  frameworkWhoDesires      String? @db.Text
+  frameworkWhoChallenges   String? @db.Text
+  frameworkWhoPerspective  String? @db.Text
+
+  // Framework - Why
+  frameworkWhyBuyProduct  String? @db.Text
+  frameworkWhyBuyFromYou  String? @db.Text
+  frameworkWhyNotBuy      String? @db.Text
+  frameworkWhyUsp         String? @db.Text
+
+  // Framework - How
+  frameworkHowItWorks           String? @db.Text
+  frameworkHowValueAdded        String? @db.Text
+  frameworkHowObjectionHandling String? @db.Text
+  frameworkHowFaq               String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projectId String  @unique
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
