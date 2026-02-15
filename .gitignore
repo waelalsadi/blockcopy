@@ -1,45 +1,61 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# BlockCopy PHP - .gitignore
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# ==========================================
+# Sensitive Files
+# ==========================================
+.env
+.env.local
+*.sql
+api/config/database.local.php
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# ==========================================
+# Logs
+# ==========================================
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*.local
-.env.local
-!.env.example
+# ==========================================
+# OS Files
+# ==========================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
 
-# vercel
-.vercel
+# ==========================================
+# IDE Files
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.claude/
 
-# typescript
+# ==========================================
+# Temporary Files
+# ==========================================
+tmp/
+temp/
+*.tmp
+*.bak
+
+# ==========================================
+# Next.js / Node.js (not used in PHP version)
+# ==========================================
+node_modules/
+.next/
+out/
+build/
+coverage/
+.pnp
+.pnp.*
 *.tsbuildinfo
 next-env.d.ts
 
-/lib/generated/prisma
+# ==========================================
+# Vercel
+# ==========================================
+.vercel
