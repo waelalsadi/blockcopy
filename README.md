@@ -76,7 +76,24 @@ public_html/
 └── ...
 ```
 
-### 3. إعداد قاعدة البيانات
+### 3. التثبيت عبر المتصفح (الأسهل)
+
+افتح رابط التثبيت في متصفحك:
+
+```
+http://your-domain.com/install.php
+```
+
+سيقوم هذا الملف بـ:
+- ✅ فحص PHP والإضافات المطلوبة
+- ✅ فحص المجلدات والملفات
+- ✅ تثبيت قاعدة البيانات بضغطة زر
+- ✅ إنشاء مستخدم admin
+- ✅ اختبار الاتصال بالـ API
+
+**مهم:** بعد التثبيت، احذف ملف `install.php` لأسباب أمنية.
+
+### 4. التثبيت اليدوي (اختياري)
 
 استورد ملف `api/database/setup.sql` إلى قاعدة البيانات:
 
@@ -86,7 +103,7 @@ mysql -u username -p database_name < api/database/setup.sql
 
 أو استخدم phpMyAdmin لاستيراد الملف.
 
-### 4. إعدادات قاعدة البيانات
+### 5. إعدادات قاعدة البيانات
 
 عدّل ملف `api/config/database.php`:
 
@@ -97,7 +114,21 @@ define('DB_USER', 'your_database_user');
 define('DB_PASS', 'your_database_password');
 ```
 
-### 5. المستخدم الافتراضي
+### 6. التحقق من API
+
+للتحقق من أن الـ API يعمل بشكل صحيح:
+
+```
+http://your-domain.com/api/check.php
+```
+
+سيعرض لك:
+- حالة PHP والإضافات
+- حالة الاتصال بقاعدة البيانات
+- الجداول المثبتة
+- نقاط الاتصال (endpoints)
+
+### 7. المستخدم الافتراضي
 
 ```
 البريد: admin@blockcopy.com
@@ -169,7 +200,11 @@ blockcopy/
 │   ├── register.php              # إنشاء حساب
 │   ├── projects.php              # قائمة المشاريع
 │   ├── project.php               # تفاصيل المشروع
-│   └── create-project.php        # إنشاء مشروع
+│   ├── create-project.php        # إنشاء مشروع
+│   └── install.php               # ملف التثبيت والتحقق
+├── api/
+│   ├── check.php                 # التحقق من API
+│   └── ...
 ├── .gitignore                    # الملفات المستثناة
 ├── .env.example                  # مثال متغيرات البيئة
 ├── LICENSE                       # الترخيص
